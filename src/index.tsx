@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {BrowserRouter, Routes, Route} from 'react-router-dom';
-import Home from './pages/Home';
+import { BrowserRouter } from 'react-router-dom';
+import { Route, Routes } from 'react-router';
+import Home from './pages/Home/index';
 import './index.scss';
 ReactDOM.render(
     <BrowserRouter>

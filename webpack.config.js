@@ -1,8 +1,14 @@
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const path = require('path');
-require('dotenv').config();
-
-const {NODE_ENV, PORT} = process.env;
+const webpack = require('webpack'); // to access built-in plugins
+const DEV_SERVER_PORT = 3000;
+const {NODE_ENV, ENV_FILE} = process.env;
+const envPath = path.resolve(process.cwd(), ENV_FILE);
+require('dotenv').config({path: envPath});
+console.log('ENV_FILE: ', envPath);
+const inAppEnv = {
+  NODE_ENV,
+};
 
 module.exports = {
   mode: NODE_ENV || 'development',
@@ -15,7 +21,9 @@ module.exports = {
       path.resolve(__dirname, 'node_modules'),
       path.resolve(__dirname, './'),
     ],
+    extensions: ['', '.webpack.js', '.web.js', '.ts', '.tsx', '.js'],
   },
+  devtool: 'source-map',
   module: {
     rules: [
       {test: /\.txt$/, use: 'raw-loader'},
@@ -47,11 +55,18 @@ module.exports = {
         ],
         exclude: /node_modules/,
       },
+      {test: /\.tsx?$/, loader: 'ts-loader', exclude: /node_modules/},
+      {test: /\.js$/, loader: 'source-map-loader', exclude: /node_modules/},
     ],
   },
   devServer: {
-    port: PORT,
+    port: DEV_SERVER_PORT,
     historyApiFallback: true,
   },
-  plugins: [new HtmlWebpackPlugin({template: './src/index.html'})],
+  plugins: [
+    new HtmlWebpackPlugin({template: './src/index.html'}),
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(inAppEnv),
+    }),
+  ],
 };
